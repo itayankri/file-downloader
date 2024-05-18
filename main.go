@@ -6,22 +6,38 @@ import (
 	"os"
 	"path"
 	"time"
+
+	"github.com/itayankri/file-downloader/httpdownloader"
+	"github.com/itayankri/file-downloader/logger"
+	"github.com/itayankri/file-downloader/workmanager"
 )
 
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
+type FileToDownload struct {
+	URL      string `json:"url"`
+	FileName string `json:"fileName"`
+}
+
+type DownloaderConfiguration struct {
+	FilesToDownload     []FileToDownload `json:"filesToDownload"`
+	TimeoutMilliseconds int64            `json:"timeoutMilliseconds"`
+	OutputDirectory     string           `json:"outputDirectory"`
+	MaxConcurrency      int              `json:"maxConcurrency"`
 }
 
 func main() {
 	configurationFilePath := handleCLIArguments()
 	data, err := os.ReadFile(configurationFilePath)
-	check(err)
+	if err != nil {
+		fmt.Printf("Failed to read configuration file from %s: %s\n", configurationFilePath, err.Error())
+		os.Exit(1)
+	}
 
 	var config *DownloaderConfiguration
 	err = json.Unmarshal(data, &config)
-	check(err)
+	if err != nil {
+		fmt.Printf("Invalid configuration file: %s\n", err.Error())
+		os.Exit(1)
+	}
 
 	downloadManager := workmanager.WorkManager{
 		MaxWorkers: config.MaxConcurrency,
@@ -31,7 +47,7 @@ func main() {
 	for _, file := range config.FilesToDownload {
 		fileDownloaders = append(
 			fileDownloaders,
-			workmanager.NewHTTPDownloader(
+			httpdownloader.NewHTTPDownloader(
 				file.URL,
 				path.Join(config.OutputDirectory, file.FileName),
 				config.TimeoutMilliseconds,
@@ -44,7 +60,7 @@ func main() {
 	endTime := time.Now()
 
 	totalDownloadTime := endTime.Sub(startTime).Round(time.Millisecond)
-	InfoLog.Printf("Total download time: %v\n", totalDownloadTime)
+	logger.Info("Total download time: %v\n", totalDownloadTime)
 }
 
 func handleCLIArguments() string {

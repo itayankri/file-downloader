@@ -2,19 +2,19 @@
   "filesToDownload": [
     {
       "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
-      "fileName": "file1.yaml"
+      "fileName": "osrm-operator-manifest.yaml"
     },
     {
-      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
-      "fileName": "file2.yaml"
+      "url": "https://github.com/itayankri/valhalla-operator/releases/latest/download/valhalla-operator.yaml",
+      "fileName": "valhalla-operator-manifest.yaml"
     },
     {
-      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
-      "fileName": "file3.yaml"
+      "url": "https://one.co.il",
+      "fileName": "one.html"
     },
     {
-      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
-      "fileName": "file4.yaml"
+      "url": "https://cdn.britannica.com/84/232784-050-1769B477/Siberian-Husky-dog.jpg",
+      "fileName": "husky.webp"
     },
     {
       "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
@@ -25,7 +25,7 @@
       "fileName": "file6.yaml"
     }
   ],
-  "timeoutMilliseconds": 900,
+  "timeoutMilliseconds": 9000,
   "outputDirectory": "./output",
   "maxConcurrency": 2
 }
