@@ -1,0 +1,31 @@
+{
+  "filesToDownload": [
+    {
+      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
+      "fileName": "file1.yaml"
+    },
+    {
+      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
+      "fileName": "file2.yaml"
+    },
+    {
+      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
+      "fileName": "file3.yaml"
+    },
+    {
+      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
+      "fileName": "file4.yaml"
+    },
+    {
+      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
+      "fileName": "file5.yaml"
+    },
+    {
+      "url": "https://github.com/itayankri/OSRM-Operator/releases/latest/download/osrm-cluster-operator.yaml",
+      "fileName": "file6.yaml"
+    }
+  ],
+  "timeoutMilliseconds": 900,
+  "outputDirectory": "./output",
+  "maxConcurrency": 2
+}
