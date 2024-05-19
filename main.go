@@ -26,22 +26,59 @@ type DownloaderConfiguration struct {
 
 func main() {
 	configurationFilePath := handleCLIArguments()
+
+	config, err := loadConfiguration(configurationFilePath)
+	check(err)
+
+	totalDownloadTime, err := downloadFiles(config)
+	check(err)
+
+	logger.Info("Total download time: %v\n", totalDownloadTime)
+}
+
+func handleCLIArguments() string {
+	if len(os.Args) < 2 {
+		fmt.Println("Path to configuration file must be provided")
+		os.Exit(1)
+	}
+
+	return os.Args[1]
+}
+
+func check(err error) {
+	if err != nil {
+		fmt.Printf("Execution failed: %s\n", err.Error())
+		os.Exit(1)
+	}
+}
+
+func loadConfiguration(configurationFilePath string) (*DownloaderConfiguration, error) {
 	data, err := os.ReadFile(configurationFilePath)
 	if err != nil {
-		fmt.Printf("Failed to read configuration file from %s: %s\n", configurationFilePath, err.Error())
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to read configuration file from %s: %s", configurationFilePath, err.Error())
 	}
 
 	var config *DownloaderConfiguration
 	err = json.Unmarshal(data, &config)
 	if err != nil {
-		fmt.Printf("Invalid configuration file: %s\n", err.Error())
-		os.Exit(1)
+		return nil, fmt.Errorf("invalid configuration file: %s", err.Error())
 	}
 
-	downloadManager := workmanager.WorkManager{
-		MaxWorkers: config.MaxConcurrency,
+	exists := isDirectoryExist(config.OutputDirectory)
+	if !exists {
+		return nil, fmt.Errorf("output directory %s does not exist", config.OutputDirectory)
 	}
+
+	return config, nil
+}
+
+func isDirectoryExist(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
+}
+
+func downloadFiles(config *DownloaderConfiguration) (time.Duration, error) {
+	downloadManager := workmanager.NewWorkManager(config.MaxConcurrency)
 
 	var fileDownloaders []workmanager.Worker
 	for _, file := range config.FilesToDownload {
@@ -59,15 +96,5 @@ func main() {
 	downloadManager.Run(fileDownloaders)
 	endTime := time.Now()
 
-	totalDownloadTime := endTime.Sub(startTime).Round(time.Millisecond)
-	logger.Info("Total download time: %v\n", totalDownloadTime)
-}
-
-func handleCLIArguments() string {
-	if len(os.Args) < 2 {
-		fmt.Println("Path to configuration file must be provided")
-		os.Exit(1)
-	}
-
-	return os.Args[1]
+	return endTime.Sub(startTime).Round(time.Millisecond), nil
 }

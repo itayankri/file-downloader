@@ -24,17 +24,17 @@ func (d *HTTPDownloader) Work(ctx context.Context) error {
 
 	out, err := os.Create(d.outputPath)
 	if err != nil {
-		logger.Error("[%s] Failed to create a file at %s: %s\n", contextId, d.outputPath, err.Error())
+		logger.Error("[context=%s] Failed to create a file at %s: %s\n", contextId, d.outputPath, err.Error())
 		return err
 	}
 	defer out.Close()
 
-	logger.Info("[%s] Start downloading file from %s\n", contextId, d.url)
+	logger.Info("[context=%s] Start downloading file from %s\n", contextId, d.url)
 	startTime := time.Now()
 
 	response, err := d.client.Get(d.url)
 	if err != nil {
-		logger.Error("[%s] Download file from %s failed: %s\n", contextId, d.url, err.Error())
+		logger.Error("[context=%s] Download file from %s failed: %s\n", contextId, d.url, err.Error())
 		os.Remove(d.outputPath)
 		return err
 	}
@@ -42,11 +42,11 @@ func (d *HTTPDownloader) Work(ctx context.Context) error {
 
 	endTime := time.Now()
 	downloadTime := endTime.Sub(startTime).Round(time.Millisecond)
-	logger.Info("[%s] File download from %s completed in %v, %s\n", contextId, d.url, downloadTime, d.outputPath)
+	logger.Info("[context=%s] File download from %s completed in %v\n", contextId, d.url, downloadTime)
 
 	_, err = io.Copy(out, response.Body)
 	if err != nil {
-		logger.Error("[%s] Failed to create a file at %s: %s\n", contextId, d.outputPath, err.Error())
+		logger.Error("[context=%s] Failed to create a file at %s: %s\n", contextId, d.outputPath, err.Error())
 		return err
 	}
 
